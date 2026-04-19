@@ -1,0 +1,6 @@
+INSERT INTO users (email, username, password_hash, is_active, is_verified, role, created_at, updated_at, last_login_at, deleted_at) VALUES
+('alice@example.com', 'alice', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.cZqF5NkLqF6lKqF6lKqF6lKqF6', TRUE, TRUE, 'user', '2024-01-15 10:00:00+00', '2025-04-01 08:30:00+00', '2025-04-18 09:00:00+00', NULL),
+('bob@example.com', 'bob', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.cZqF5NkLqF6lKqF6lKqF6lKqF6', TRUE, TRUE, 'moderator', '2024-02-20 14:20:00+00', '2025-04-17 12:15:00+00', '2025-04-17 12:15:00+00', NULL),
+('charlie@example.com', 'charlie', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.cZqF5NkLqF6lKqF6lKqF6lKqF6', FALSE, FALSE, 'user', '2024-03-10 09:45:00+00', '2024-12-01 11:00:00+00', NULL, '2024-12-01 11:00:00+00'),
+('admin@system.com', 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.cZqF5NkLqF6lKqF6lKqF6lKqF6', TRUE, TRUE, 'admin', '2024-01-01 00:00:00+00', '2025-04-18 07:00:00+00', '2025-04-18 07:00:00+00', NULL),
+('diana@example.com', 'diana', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.cZqF5NkLqF6lKqF6lKqF6lKqF6', TRUE, TRUE, 'user', '2024-05-05 16:30:00+00', '2025-04-10 20:45:00+00', '2025-04-10 20:45:00+00', NULL);

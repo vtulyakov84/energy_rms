@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_DB_NAME}
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      # Подключаем каталог для хранения файлов БД
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+
+      # Подключаем файлы конфигурации работы БД
+      - ./postgres/config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./postgres/config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+
+      # Подключаем sql-скрипты, которые будут выполняться
+      # при превом запуске контейнера.
+      # Порядок вызова скриптов определяется порядком сортировки файлов
+      - ./postgres/scripts/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - app-network
+
+  web-service:
+    build:
+      context: ./web-service
+      dockerfile: Dockerfile
+    ports:
+    - "8080:80"
+    volumes:
+      - ./web-service/www:/var/www/html
+      - ./web-service/apache-config:/etc/apache2/sites-availabel
+      - ./web-service/php-config:/usr/local/etc/php
+    networks:
+      - app-network
+
+  auth-service:
+    build:
+      context: ./rest-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SSLMODE: ${DB_SSLMODE}
+      DB_URL: ${DB_URL}
+      JWT_SECRET: xK9mP2vL8nQ4rT6wY1zC3bA5dF7gH9jK1lM2nP3qR4sT5uV6wX7yZ8
+    volumes:
+      - ./.env:/root/.env
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
