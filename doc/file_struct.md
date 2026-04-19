@@ -42,16 +42,5 @@
 16 directories, 21 files
 ```
 
-<table width=100%>
-    <tr>
-        <td width=30%>
-            [Страница проекта](../)
-        </td>
-        <td>
-            Наверх
-        </td>
-        <td width=30%>
-            &nbsp;
-        </td>
-    </tr>
-</table>
+
+[Страница проекта](../README.md)
