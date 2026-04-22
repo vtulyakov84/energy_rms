@@ -1,11 +1,4 @@
-```bash
-# Собрать образ из Dockerfile
-# `-t` - <image-name:tag>, например 
-# `.`  - путь к директории с Dockerfile
-$ docker build -t <image-name:tag> .
-```
 
-***
 
 ```bash
 # Скачать образ из репозитория в локальное хранилище
