@@ -1,6 +1,6 @@
 services:
-  postgres:
-    image: postgres:15-alpine
+  rms-postgres:
+    image: postgres:16-alpine
     container_name: ${CONTAINER_DB_NAME}
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -13,8 +13,8 @@ services:
       - /var/lib/postgresql/data:/var/lib/postgresql/data
 
       # Подключаем файлы конфигурации работы БД
-      - ./postgres/config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
-      - ./postgres/config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./rms-postgres/config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./rms-postgres/config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
 
       # Подключаем sql-скрипты, которые будут выполняться
       # при превом запуске контейнера.
@@ -29,45 +29,26 @@ services:
     networks:
       - app-network
 
-  web-service:
+  rms-web:
     build:
-      context: ./web-service
+      context: ./rms-web
       dockerfile: Dockerfile
     container_name: ${CONTAINER_WEB_NAME}
     ports:
     - "80:80"
     volumes:
-      - ./web-service/www:/var/www/html
-      - ./web-service/apache-config:/etc/apache2/sites-availabel
-      - ./web-service/php-config:/usr/local/etc/php
-    networks:
-      - app-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  rest-api-service:
-    build:
-      context: ./rest-api
-      dockerfile: Dockerfile
-    container_name: ${CONTAINER_REST_API}
-    ports:
-      - "8001:8001"
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - ./rms-web/www:/var/www/html
+      - ./rms-web/httpd2/default.conf:/etc/httpd2/conf/sites-available/default.conf:ro
+      #- ./rms-web/php-config:/etc/php/8.2/cli/
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: 5432
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_SSLMODE: ${DB_SSLMODE}
-      DB_URL: ${DB_URL}
-      JWT_SECRET: xK9mP2vL8nQ4rT6wY1zC3bA5dF7gH9jK1lM2nP3qR4sT5uV6wX7yZ8
-    volumes:
-      - ./.env:/root/.env
-
+      - DB_HOST=rms-postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      rms-postgres:
+        condition: service_healthy
     networks:
       - app-network
 
